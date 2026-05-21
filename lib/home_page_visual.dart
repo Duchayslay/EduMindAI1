@@ -88,6 +88,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+
+  // CODE CUA DUC
+
+  void _navigateToTools() {
+    
+  }
   final TextEditingController _taskController = TextEditingController();
   List<String> tasks = [];
 

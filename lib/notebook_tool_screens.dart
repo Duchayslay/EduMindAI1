@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_learning_application/screens/home.dart';
 
 import 'gemini_helpers.dart';
 import 'state/notebook_context_state.dart';
@@ -48,7 +49,8 @@ class NotebookToolScreen extends StatelessWidget {
         title: Text(tool.title),
       ),
       body: switch (tool) {
-        NotebookTool.pomodoro => const _PomodoroBody(),
+        NotebookTool.pomodoro => HomeScreen(),
+        NotebookTool.report => ,
         _ => _AiToolBody(tool: tool),
       },
     );
@@ -68,7 +70,8 @@ class _ContextBanner extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Ngữ cảnh Notebook (dùng cho prompt AI)', style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text('Ngữ cảnh Notebook (dùng cho prompt AI)',
+                style: TextStyle(fontWeight: FontWeight.w600)),
             const SizedBox(height: 6),
             Text(
               t.isEmpty ? 'Chưa có — hãy điền ở Dashboard.' : t,
@@ -154,11 +157,13 @@ class _AiToolBodyState extends State<_AiToolBody> {
               ? const SizedBox(
                   width: 18,
                   height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: Colors.white),
                 )
               : const Icon(Icons.auto_awesome),
           label: Text(_loading ? 'Đang tạo…' : 'Tạo với AI (Gemini)'),
-          style: FilledButton.styleFrom(backgroundColor: const Color(0xFF48A9A6)),
+          style:
+              FilledButton.styleFrom(backgroundColor: const Color(0xFF48A9A6)),
         ),
         if (_err != null) ...[
           const SizedBox(height: 12),
@@ -174,105 +179,117 @@ class _AiToolBodyState extends State<_AiToolBody> {
 
   String _blurb(NotebookTool t) {
     return switch (t) {
-      NotebookTool.mindmap => 'Tạo cấu trúc cây từ nội dung Notebook — bạn có thể copy sang XMind / Obsidian.',
-      NotebookTool.quiz => 'Sinh đề kiểm tra nhanh từ tài liệu bạn đã dán ở Dashboard.',
-      NotebookTool.flashcard => 'Sinh thẻ ghi nhớ để học lại từ vựng / định nghĩa.',
-      NotebookTool.slideDesk => 'Khung slide để bạn làm PowerPoint / Google Slides.',
+      NotebookTool.mindmap =>
+        'Tạo cấu trúc cây từ nội dung Notebook — bạn có thể copy sang XMind / Obsidian.',
+      NotebookTool.quiz =>
+        'Sinh đề kiểm tra nhanh từ tài liệu bạn đã dán ở Dashboard.',
+      NotebookTool.flashcard =>
+        'Sinh thẻ ghi nhớ để học lại từ vựng / định nghĩa.',
+      NotebookTool.slideDesk =>
+        'Khung slide để bạn làm PowerPoint / Google Slides.',
       NotebookTool.report => 'Tóm tắt và định hướng ôn tiếp theo.',
       NotebookTool.pomodoro => '',
     };
   }
 }
 
-class _PomodoroBody extends StatefulWidget {
-  const _PomodoroBody();
+// class _PomodoroBody extends StatefulWidget {
+//   const _PomodoroBody();
 
-  @override
-  State<_PomodoroBody> createState() => _PomodoroBodyState();
-}
+//   @override
+//   State<_PomodoroBody> createState() => _PomodoroBodyState();
+// }
 
-class _PomodoroBodyState extends State<_PomodoroBody> {
-  static const int workSec = 25 * 60;
-  int _remaining = workSec;
-  bool _running = false;
-  Timer? _timer;
+// class _PomodoroBodyState extends State<_PomodoroBody> {
+//   static const int workSec = 25 * 60;
+//   int _remaining = workSec;
+//   bool _running = false;
+//   Timer? _timer;
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
+//   @override
+//   void dispose() {
+//     _timer?.cancel();
+//     super.dispose();
+//   }
 
-  void _tick(Timer t) {
-    if (_remaining <= 1) {
-      t.cancel();
-      setState(() {
-        _remaining = workSec;
-        _running = false;
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Hết phiên Pomodoro — nghỉ ngắn rồi học tiếp nhé.')),
-        );
-      }
-      return;
-    }
-    setState(() => _remaining--);
-  }
+//   void _tick(Timer t) {
+//     if (_remaining <= 1) {
+//       t.cancel();
+//       setState(() {
+//         _remaining = workSec;
+//         _running = false;
+//       });
+//       if (mounted) {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           const SnackBar(
+//               content:
+//                   Text('Hết phiên Pomodoro — nghỉ ngắn rồi học tiếp nhé.')),
+//         );
+//       }
+//       return;
+//     }
+//     setState(() => _remaining--);
+//   }
 
-  void _toggle() {
-    if (_running) {
-      _timer?.cancel();
-      setState(() => _running = false);
-      return;
-    }
-    setState(() => _running = true);
-    _timer = Timer.periodic(const Duration(seconds: 1), _tick);
-  }
+//   void _toggle() {
+//     if (_running) {
+//       _timer?.cancel();
+//       setState(() => _running = false);
+//       return;
+//     }
+//     setState(() => _running = true);
+//     _timer = Timer.periodic(const Duration(seconds: 1), _tick);
+//   }
 
-  void _reset() {
-    _timer?.cancel();
-    setState(() {
-      _remaining = workSec;
-      _running = false;
-    });
-  }
+//   void _reset() {
+//     _timer?.cancel();
+//     setState(() {
+//       _remaining = workSec;
+//       _running = false;
+//     });
+//   }
 
-  String _fmt(int s) {
-    final m = s ~/ 60;
-    final r = s % 60;
-    return '${m.toString().padLeft(2, '0')}:${r.toString().padLeft(2, '0')}';
-  }
+//   String _fmt(int s) {
+//     final m = s ~/ 60;
+//     final r = s % 60;
+//     return '${m.toString().padLeft(2, '0')}:${r.toString().padLeft(2, '0')}';
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        const _ContextBanner(),
-        const SizedBox(height: 24),
-        Text(
-          _fmt(_remaining),
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 56, fontWeight: FontWeight.w300, letterSpacing: 2),
-        ),
-        const SizedBox(height: 8),
-        const Text('Phiên 25 phút — gắn với nội dung bạn đang học trong Notebook.', textAlign: TextAlign.center),
-        const SizedBox(height: 24),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FilledButton.icon(
-              onPressed: _toggle,
-              icon: Icon(_running ? Icons.pause : Icons.play_arrow),
-              label: Text(_running ? 'Tạm dừng' : 'Bắt đầu'),
-              style: FilledButton.styleFrom(backgroundColor: const Color(0xFF48A9A6)),
-            ),
-            const SizedBox(width: 12),
-            OutlinedButton(onPressed: _running ? null : _reset, child: const Text('Đặt lại')),
-          ],
-        ),
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return ListView(
+//       padding: const EdgeInsets.all(16),
+//       children: [
+//         const _ContextBanner(),
+//         const SizedBox(height: 24),
+//         Text(
+//           _fmt(_remaining),
+//           textAlign: TextAlign.center,
+//           style: const TextStyle(
+//               fontSize: 56, fontWeight: FontWeight.w300, letterSpacing: 2),
+//         ),
+//         const SizedBox(height: 8),
+//         const Text(
+//             'Phiên 25 phút — gắn với nội dung bạn đang học trong Notebook.',
+//             textAlign: TextAlign.center),
+//         const SizedBox(height: 24),
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             FilledButton.icon(
+//               onPressed: _toggle,
+//               icon: Icon(_running ? Icons.pause : Icons.play_arrow),
+//               label: Text(_running ? 'Tạm dừng' : 'Bắt đầu'),
+//               style: FilledButton.styleFrom(
+//                   backgroundColor: const Color(0xFF48A9A6)),
+//             ),
+//             const SizedBox(width: 12),
+//             OutlinedButton(
+//                 onPressed: _running ? null : _reset,
+//                 child: const Text('Đặt lại')),
+//           ],
+//         ),
+//       ],
+//     );
+//   }
+// }
