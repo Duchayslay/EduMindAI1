@@ -129,7 +129,7 @@ class MobileHomePage extends StatelessWidget {
           SizedBox(width: 4),
           TextDirectionButton(),
           SizedBox(width: 4),
-          SizedBox(width: 4),
+          SizedBox(width: s4),
           LocaleDropdown(),
         ],
         bottom: PreferredSize(
