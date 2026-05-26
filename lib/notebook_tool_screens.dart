@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_learning_application/main.dart';
+import 'package:smart_learning_application/screens/calendar.dart';
 import 'package:smart_learning_application/screens/home.dart';
 
 import 'gemini_helpers.dart';
@@ -50,7 +52,7 @@ class NotebookToolScreen extends StatelessWidget {
       ),
       body: switch (tool) {
         NotebookTool.pomodoro => HomeScreen(),
-        NotebookTool.report => ,
+        NotebookTool.report => MyCalendar(),
         _ => _AiToolBody(tool: tool),
       },
     );
